@@ -141,7 +141,7 @@ def generate_simulated_reads(inputs):
             read_seq_muta_end = mutate_read_ends(read_seq_muta, bp5_list, pro5_list, bp3_list, pro3_list)
             if read_seq_muta_end != "":
                 lr_idx += 1
-                simu_fa_name_line = ">LR" + str(iso_list.index(iso) + 1) + "." + str(lr_idx) + " " + iso + "\n"
+                simu_fa_name_line = ">PB." + str(iso_list.index(iso) + 1) + "." + str(lr_idx) + "_" + iso + "\n"
                 for j in range(0, len(read_seq_muta_end), 80):
                     simu_fa_seq_line_list.append(read_seq_muta_end[j:j + 80])
                 simu_fa_line = simu_fa_name_line + "\n".join(simu_fa_seq_line_list)
