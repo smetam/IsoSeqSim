@@ -175,7 +175,7 @@ def do_inputs():
     group1.add_argument('--ei', type=str, default='0.011', help="Error rate: insertion. For more choices, see README")
     group1.add_argument('--ed', type=str, default='0.022', help="Error rate: deletion. For more choices, see README")
     group1.add_argument('--expr', type=str, default=None, help="Expression file")
-    group1.add_argument('--polya', type=bool, default=False, action='store_true', help="Append polyA tails to transcripts before mutating")
+    group1.add_argument('--polya', default=False, action='store_true', help="Append polyA tails to transcripts before mutating")
 
     group2 = parser.add_argument_group('Fusion mode options')
     group2.add_argument('--fc', type=str, default='all',

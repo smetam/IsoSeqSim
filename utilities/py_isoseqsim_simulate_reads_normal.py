@@ -139,7 +139,9 @@ def generate_simulated_reads(inputs):
             simu_fa_seq_line_list = []
             if append_polya:
                 read_seq_polya = read_seq + ''.join("A" for i in range(np.random.randint(20, 101))) # sequence has correct strand, not the genomic one
-            read_seq_muta = mutate_read(read_seq, error_type, error_prob)
+                read_seq_muta = mutate_read(read_seq_polya, error_type, error_prob)
+            else:
+                read_seq_muta = mutate_read(read_seq, error_type, error_prob)
             read_seq_muta_end = mutate_read_ends(read_seq_muta, bp5_list, pro5_list, bp3_list, pro3_list)
             if read_seq_muta_end != "":
                 lr_idx += 1
@@ -157,11 +159,11 @@ def generate_simulated_reads(inputs):
         return None
 
 
-def generate_tx(input_fl, dic_iso_seq, iso_list, error_type, error_prob, bp5_list, pro5_list, bp3_list, pro3_list):
+def generate_tx(input_fl, dic_iso_seq, iso_list, error_type, error_prob, bp5_list, pro5_list, bp3_list, pro3_list, append_polya):
     z = 0
     for line in input_fl:
         z += 1
-        yield (line, z, dic_iso_seq, iso_list, error_type, error_prob, bp5_list, pro5_list, bp3_list, pro3_list)
+        yield (line, z, dic_iso_seq, iso_list, error_type, error_prob, bp5_list, pro5_list, bp3_list, pro3_list, append_polya)
 
 
 def do_inputs():
@@ -181,7 +183,7 @@ def do_inputs():
     parser.add_argument('-i', '--er_ins', type=float, default=0.025, help="Error rate: insertion")
     parser.add_argument('-d', '--er_del', type=float, default=0.025, help="Error rate: deletion")
     parser.add_argument('-p', '--cpu', type=int, default=cpu_count(), help="Number of threads")
-    parser.add_argument('--polya', type=bool, default=False, action='store_true', help="Append polyA tails to transcripts before mutating")
+    parser.add_argument('--polya', default=False, action='store_true', help="Append polyA tails to transcripts before mutating")
 
     args = parser.parse_args()
     return args
