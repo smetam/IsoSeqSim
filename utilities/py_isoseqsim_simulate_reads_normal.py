@@ -18,7 +18,7 @@ def main(args):
     csize = 100
     results = p.imap(func=generate_simulated_reads,
                      iterable=generate_tx(input_gpd_fl, dic_iso_seq, iso_list, error_type, error_prob, bp5_list,
-                                          pro5_list, bp3_list, pro3_list), chunksize=csize)
+                                          pro5_list, bp3_list, pro3_list, args.polya), chunksize=csize)
     for res in results:
         if not res: continue
         output_gpd_fl.write(res + "\n")
@@ -128,7 +128,7 @@ def parse_transcriptome_fa(iso_fa_fl):
 
 
 def generate_simulated_reads(inputs):
-    (line, z, dic_iso_seq, iso_list, error_type, error_prob, bp5_list, pro5_list, bp3_list, pro3_list) = inputs
+    (line, z, dic_iso_seq, iso_list, error_type, error_prob, bp5_list, pro5_list, bp3_list, pro3_list, append_polya) = inputs
     gene, iso, chrom, strand, tss, tts, cds_tss, cds_tts, exon_count, exon_start_set, exon_end_set, read_count = line.rstrip(
         "\n").split("\t")
     lr_idx = 0
@@ -137,6 +137,8 @@ def generate_simulated_reads(inputs):
         simu_fa_all_lines_list = []
         for i in range(0, int(read_count)):
             simu_fa_seq_line_list = []
+            if append_polya:
+                read_seq_polya = read_seq + ''.join("A" for i in range(np.random.randint(20, 101))) # sequence has correct strand, not the genomic one
             read_seq_muta = mutate_read(read_seq, error_type, error_prob)
             read_seq_muta_end = mutate_read_ends(read_seq_muta, bp5_list, pro5_list, bp3_list, pro3_list)
             if read_seq_muta_end != "":
@@ -179,6 +181,8 @@ def do_inputs():
     parser.add_argument('-i', '--er_ins', type=float, default=0.025, help="Error rate: insertion")
     parser.add_argument('-d', '--er_del', type=float, default=0.025, help="Error rate: deletion")
     parser.add_argument('-p', '--cpu', type=int, default=cpu_count(), help="Number of threads")
+    parser.add_argument('--polya', type=bool, default=False, action='store_true', help="Append polyA tails to transcripts before mutating")
+
     args = parser.parse_args()
     return args
 
