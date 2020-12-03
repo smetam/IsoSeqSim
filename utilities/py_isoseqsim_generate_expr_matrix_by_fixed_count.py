@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import time
 import argparse
-
+from collections import defaultdict
 
 def main(args):
     sys.stdout.write("Start analysis: " + time.strftime("%a,%d %b %Y %H:%M:%S") + "\n")
@@ -14,14 +14,16 @@ def main(args):
 
 def generate_expr_matrix(input_gpd_fl, input_txt_fl, output_expr_mtx):
     # parse txt
-    dic_iso_expr = {}
+    dic_iso_expr = defaultdict(int)
     for line in input_txt_fl:
+        if line.startswith("#"):
+            continue
         iso_id, expr_v = line.strip().split("\t")[:2]  # expr_v is TPM now
-        dic_iso_expr[iso_id] = str(int(round(float(expr_v))))
+        dic_iso_expr[iso_id] = int(round(float(expr_v)))
 
     for line in input_gpd_fl:
         iso_id = line.strip().split("\t")[1]
-        print(line.strip() + "\t" + dic_iso_expr[iso_id], file=output_expr_mtx)
+        print(line.strip() + "\t" + str(dic_iso_expr[iso_id]), file=output_expr_mtx)
 
     input_txt_fl.close()
     input_gpd_fl.close()
